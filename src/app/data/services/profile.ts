@@ -8,7 +8,7 @@ export class ProfileService {
   private http = inject(HttpClient);
   private baseApiUrl = 'https://icherniakov.ru/yt-course'
 
-  getTestAccounts(): void {
-    this.http.get(`${this.baseApiUrl}/account/test_accounts`);
+  getTestAccounts() {
+    return this.http.get(`${this.baseApiUrl}/account/test_accounts`);
   }
 }
