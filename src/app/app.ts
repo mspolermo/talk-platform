@@ -3,6 +3,7 @@ import { RouterOutlet } from '@angular/router';
 import { ProfileCard } from './common-ui/profile-card/profile-card';
 import { ProfileService } from './data/services/profile';
 import { CommonModule } from '@angular/common';
+import { Profile } from './data/interfaces/profile.interface';
 
 @Component({
   selector: 'app-root',
@@ -14,7 +15,7 @@ export class App {
   protected readonly title = signal('talk-platform');
   protected profileService = inject(ProfileService);
 
-  protected profiles = signal<any>([]);
+  protected profiles = signal<Profile[]>([]);
 
   constructor() {
     this.profileService.getTestAccounts().subscribe((res) => {
