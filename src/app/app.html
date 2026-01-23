@@ -6,16 +6,9 @@
     </div>
     <div class="divider" role="separator" aria-label="Divider"></div>
     <div class="right-side">
-
-      <div class="profile-card__wrapper">
-        @for (profile of profiles(); track profile.id) {
-          <app-profile-card
-            [profile]="profile"
-          ></app-profile-card>
-        }
-      </div>
+      <router-outlet />
     </div>
   </div>
 </main>
 
-<router-outlet />
+
