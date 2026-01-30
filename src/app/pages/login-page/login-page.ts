@@ -1,5 +1,6 @@
-import { Component } from '@angular/core';
-import { FormControl, FormGroup, ReactiveFormsModule } from '@angular/forms';
+import { Component, inject } from '@angular/core';
+import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
+import { Auth } from '../../auth/auth';
 
 @Component({
   selector: 'app-login-page',
@@ -8,12 +9,24 @@ import { FormControl, FormGroup, ReactiveFormsModule } from '@angular/forms';
   styleUrl: './login-page.scss',
 })
 export class LoginPage {
-  form = new FormGroup({
-    username: new FormControl(null),
-    password: new FormControl(null)
+
+  private authService = inject(Auth)
+
+form = new FormGroup({
+  username: new FormControl<string>('', {
+    nonNullable: true,
+    validators: Validators.required
+  }),
+  password: new FormControl<string>('', {
+    nonNullable: true,
+    validators: Validators.required
   })
+});
 
   onSubmit() {
-    console.log(this.form.value)
+  if (this.form.invalid) return;
+
+  console.log(this.form.getRawValue());
+  this.authService.login(this.form.getRawValue());
   }
 }
