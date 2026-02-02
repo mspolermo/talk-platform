@@ -9,7 +9,6 @@ export class Auth {
   private baseApiUrl = 'https://icherniakov.ru/yt-course/auth'
 
   login (payload: {username: string, password: string}) {
-    console.log('login', payload);
     return this.http.post(`${this.baseApiUrl}/token`, payload).subscribe()
   }
 }
