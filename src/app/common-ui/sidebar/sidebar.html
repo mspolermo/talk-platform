@@ -5,22 +5,10 @@
 />
 <nav>
   <ul class="main-menu-list">
-    <li>
+    <li *ngFor="let menuItem of menuItems">
       <button class="menu-item">
-        <img src="/assets/svg/home.svg" alt="home">
-        <div>Моя страница</div>
-      </button>
-    </li>
-    <li>
-      <button class="menu-item">
-        <img src="/assets/svg/chat.svg" alt="chat">
-        <div>Чаты</div>
-      </button>
-    </li>
-    <li>
-      <button class="menu-item">
-        <img src="/assets/svg/search.svg" alt="search">
-        <div>Поиск</div>
+        <app-svg-icon [icon]="menuItem.icon"></app-svg-icon>
+        <div>{{ menuItem.label }}</div>
       </button>
     </li>
   </ul>
