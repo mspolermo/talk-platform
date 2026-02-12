@@ -42,3 +42,21 @@
   height: 16px;
   color: red;
 }
+
+.to-subscribers {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+
+}
+
+.to-subscribers-link {
+  color: var(--primary-color);
+  text-decoration: none;
+}
+
+.to-subscribers-icon {
+  color: var(--primary-color);
+  width: 18px;
+  height: 18px;
+}

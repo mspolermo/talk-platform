@@ -13,7 +13,7 @@ export const authTokenInterceptor: HttpInterceptorFn = (req, next) => {
   if (!token) return next(req)
 
   if (isRefreshing) {
-    refreshAndProceed(authService, req, next)
+    return refreshAndProceed(authService, req, next)
   }
 
   return next(addToken(req, token)).pipe(
@@ -33,6 +33,7 @@ const refreshAndProceed = (authService: Auth, req: HttpRequest<unknown>, next: H
     return authService.refreshAuthToken().pipe(
       switchMap((res) => {
         isRefreshing = false
+        authService.token = res.access_token;
         return next(addToken(req, res.access_token))
       })
     )

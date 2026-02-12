@@ -4,7 +4,7 @@
   class="ml16 mb20"
 />
 <nav>
-  <ul class="main-menu-list">
+  <ul class="main-menu-list mb20">
     <li *ngFor="let menuItem of menuItems">
       <button class="menu-item">
         <app-svg-icon [icon]="menuItem.icon"></app-svg-icon>
@@ -14,4 +14,23 @@
   </ul>
 </nav>
 <p class="medium-text mb20">Подписчики</p>
-<app-subscriber-card></app-subscriber-card>
+
+
+
+@for (profile of subscribers$ | async; track profile.id) {
+  <app-subscriber-card [profile]="profile"></app-subscriber-card>
+}
+
+<div class="mt20 to-subscribers">
+  <a
+    [routerLink]="['/subscribers']"
+    class="to-subscribers-link medium-text"
+  >
+    Все подписчики
+  </a>
+  <app-svg-icon
+    icon="arrow"
+    [size]=18
+    class="to-subscribers-icon"
+    ></app-svg-icon>
+</div>
