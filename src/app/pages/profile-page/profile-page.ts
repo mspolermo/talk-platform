@@ -3,6 +3,7 @@ import { ProfileHeader } from "../../common-ui/profile-header/profile-header";
 import { ProfileService } from '../../data/services/profile';
 import { ActivatedRoute } from '@angular/router';
 import { switchMap } from 'rxjs';
+import { toObservable } from '@angular/core/rxjs-interop';
 
 @Component({
   selector: 'app-profile-page',
@@ -15,6 +16,10 @@ export class ProfilePage {
   route = inject(ActivatedRoute)
 
   profile$ = this.route.params.pipe(
-    switchMap()
+    switchMap(({ id }) => {
+      if (id === 'me') return toObservable(this.profileService.me)
+
+      return this.profileService.getAccount(id)
+    })
   )
 }
