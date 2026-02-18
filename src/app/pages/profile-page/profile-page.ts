@@ -1,4 +1,5 @@
 import { Component, inject } from '@angular/core';
+import { AsyncPipe } from "@angular/common";
 import { ProfileHeader } from "../../common-ui/profile-header/profile-header";
 import { ProfileService } from '../../data/services/profile';
 import { ActivatedRoute } from '@angular/router';
@@ -7,7 +8,7 @@ import { toObservable } from '@angular/core/rxjs-interop';
 
 @Component({
   selector: 'app-profile-page',
-  imports: [ProfileHeader],
+  imports: [AsyncPipe, ProfileHeader],
   templateUrl: './profile-page.html',
   styleUrl: './profile-page.scss',
 })
@@ -15,9 +16,11 @@ export class ProfilePage {
   profileService = inject(ProfileService)
   route = inject(ActivatedRoute)
 
+  me$ = toObservable(this.profileService.me)
+
   profile$ = this.route.params.pipe(
     switchMap(({ id }) => {
-      if (id === 'me') return toObservable(this.profileService.me)
+      if (id === 'me') return this.me$
 
       return this.profileService.getAccount(id)
     })
