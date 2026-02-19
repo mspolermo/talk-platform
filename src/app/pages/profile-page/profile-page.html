@@ -3,6 +3,15 @@
     <app-profile-header
       [profile]="profile"
     ></app-profile-header>
+
+    <a class="btn to-settings-btn" [routerLink]="['/settings']">
+      Редактировать
+      <app-svg-icon
+        icon="settings"
+        class="to-settings-icon"
+        [size]="16"
+      ></app-svg-icon>
+    </a>
   </header>
 }
 
