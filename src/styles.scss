@@ -125,3 +125,24 @@ body {
   color: var(--light-color);
   width: 100%;
 }
+
+.tt-form-label {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  font-size: 12px;
+  font-style: normal;
+  font-weight: 500;
+  line-height: 16px;
+}
+
+.tt-form-label__text {
+  
+}
+
+.tt-form-input {
+  font-size: 14px;
+  font-style: normal;
+  font-weight: 400;
+  line-height: 21px;
+}
