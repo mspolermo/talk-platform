@@ -1,10 +1,30 @@
 <app-profile-header></app-profile-header>
 
-<form class="profile-form">
+<form class="profile-form" [formGroup]="form">
   <div class="two-columns">
-    <label for="" class="tt-form-label">
+    <label class="tt-form-label">
       <span class="tt-form-label__text">Имя</span>
-      <input type="text" class="tt-form-input">
+      <input type="text" class="tt-form-input" formControlName="firstName">
+    </label>
+
+    <label class="tt-form-label">
+      <span class="tt-form-label__text">Фамилия</span>
+      <input type="text" class="tt-form-input" formControlName="lastName">
     </label>
   </div>
+
+    <label class="tt-form-label">
+      <span class="tt-form-label__text">Telegram username</span>
+      <input type="text" class="tt-form-input" formControlName="username">
+    </label>
+
+    <label class="tt-form-label">
+      <span class="tt-form-label__text">Навыки</span>
+      <textarea class="tt-form-input" formControlName="description"></textarea>
+    </label>
+
+    <label class="tt-form-label">
+      <span class="tt-form-label__text">Навыки</span>
+      <input type="text" class="tt-form-input" formControlName="stack">
+    </label>
 </form>
