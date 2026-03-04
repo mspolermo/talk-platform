@@ -1,5 +1,11 @@
-<img src="/assets/imgs/avatar-placeholder.png" alt="avatar-placeholder" class="avatar">
-<div class="dropzone" tabindex="0" (keyup.enter)="fileDrop.click()">
+<img [src]="preview()" alt="avatar-placeholder" class="avatar">
+<div
+  dnd
+  class="dropzone"
+  tabindex="0"
+  (keyup.enter)="fileDrop.click()"
+  (fileDropped)="onFileDropped($event)"
+>
   <div class="dropzone-content">
     <app-svg-icon
         icon="upload"
