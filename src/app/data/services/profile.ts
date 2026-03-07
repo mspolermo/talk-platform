@@ -51,4 +51,8 @@ export class ProfileService {
 
     return this.http.post<Profile>(`${this.baseApiUrl}/account/upload_image`, fd)
   }
+
+  filterProfiles(params: Record<string, any>) {
+    return this.http.get<Pageble<Profile>>(`${this.baseApiUrl}/account/accounts`, {params})
+  }
 }

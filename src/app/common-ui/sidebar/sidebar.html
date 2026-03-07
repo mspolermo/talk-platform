@@ -6,7 +6,11 @@
 <nav>
   <ul class="main-menu-list mb20">
     <li *ngFor="let menuItem of menuItems">
-      <a class="menu-item" [routerLink]="[menuItem.link]">
+      <a
+        class="menu-item"
+        [routerLink]="[menuItem.link]"
+        routerLinkActive="active"
+      >
         <app-svg-icon [icon]="menuItem.icon"></app-svg-icon>
         <div>{{ menuItem.label }}</div>
       </a>
