@@ -13,12 +13,8 @@ import { ProfileFilters } from "./profile-filters/profile-filters";
 export class SearchPage {
   protected profileService = inject(ProfileService);
 
-  protected profiles = signal<Profile[]>([]);
+  protected profiles = this.profileService.filtredProfiles
 
   constructor() {
-    this.profileService.getTestAccounts().subscribe((res) => {
-      this.profiles.set(res);
-    }
-    );
   }
 }
