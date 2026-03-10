@@ -1,59 +1,134 @@
-# TalkPlatform
-
-This project was generated using [Angular CLI](https://github.com/angular/angular-cli) version 21.0.5.
-
-## Development server
-
-To start a local development server, run:
-
+# Talk Platform (TIK‑TALK)
+Фронтенд-приложение на Angular для работы с социальным профилем, подписчиками и поиском пользователей, построенное поверх готового backend API. Проект демонстрирует продвинутую работу с современным Angular, реактивными формами и RxJS.
+## Обзор проекта
+Приложение реализует интерфейс социальной платформы TIK‑TALK: пользователь авторизуется, попадает в основной layout с боковым меню, может просматривать свой профиль и чужие профили, подписчиков, редактировать данные аккаунта и искать другие аккаунты по фильтрам.  
+Frontend полностью построен на Angular 21 с использованием standalone-компонентов, сигналов и функциональных interceptor/guard, и интегрируется с REST API, задокументированным через Swagger.
+## Технологический стек
+- **Angular 21 (standalone components)**: основа приложения; маршрутизация (`Router`), DI, компоненты, директивы, пайпы, guards и interceptors без модулей.
+- **TypeScript**: типизация моделей (профиль, пагинация, auth), строгое API-взаимодействие и безопасность данных.
+- **RxJS**: реактивные потоки для работы с HTTP (`HttpClient`), debounce фильтров, переключение потоков по параметрам маршрута, реакция на сигналы.
+- **Angular Signals**: хранение состояния профиля (`ProfileService.me`, `filtredProfiles`), локальное состояние компонентов без ручного управления `Subject`.
+- **Reactive Forms**: формы логина, фильтрации пользователей и настроек профиля с валидацией и статической типизацией.
+- **Angular Router + Guards**: конфигурация маршрутов (`app.routes.ts`), защита приватных маршрутов через `canActivateAuth`, layout с дочерними страницами.
+- **HTTP Client + HTTP Interceptors**: централизованное добавление `Authorization` заголовка, автоматическое обновление токена при `403`, единое место для обработки auth-ошибок.
+- **ngx-cookie-service**: хранение access/refresh токенов в cookie, восстановление сессии после перезагрузки.
+- **SCSS**: модульные стили компонентов и глобальные файлы (`styles.scss`, `fonts.scss`, `margins.scss`), адаптация интерфейса под макет Figma.
+## Основной функционал
+### Авторизация пользователя
+- Страница логина (`LoginPage`) с реактивной формой (логин/пароль, required-валидаторы).
+- Отправка формы в `Auth.login`, сохранение `access_token` и `refresh_token` в cookies.
+- После успешной авторизации — редирект в основное приложение.
+### Работа с профилем
+- Страница профиля (`ProfilePage`) с просмотром своего профиля (`/profile/me`) и чужих (`/profile/:id`).
+- Загрузка базовой информации о пользователе (`ProfileService.getMe`, `getAccount`).
+- Отрисовка заголовка профиля, информации и ленты (компоненты `ProfileHeader`, `PostFeed`, `Post`).
+### Список подписчиков и сайдбар
+- `Sidebar` получает текущего пользователя и шорт-лист подписчиков (`getSubscribersShortList`).
+- Список подписчиков рендерится через переиспользуемый `SubscriberCard`.
+- Боковое меню с навигацией: **«Моя страница»**, **«Чаты»**, **«Поиск»**.
+### Поиск пользователей и фильтрация профилей
+- Страница поиска (`SearchPage`) отображает список профилей через `ProfileCard`.
+- Компонент `ProfileFilters` реализует реактивную форму фильтров (имя, фамилия, стек).
+- Значения формы превращаются в запрос к API с `debounceTime(300)` и `switchMap` — «живой» поиск без лишних запросов.
+### Настройки профиля и редактирование
+- Страница настроек (`SettingsPage`) с реактивной формой данных пользователя.
+- Подтягивание текущего профиля в форму через `effect` и `ProfileService.me` (signals).
+- Сохранение изменений (`patchProfile`) и загрузка нового аватара (`uploadAvatar`) через `AvatarUpload`.
+### Реактивные формы
+- Чёткое разделение между формами авторизации, поиска и настроек.
+- Использование `FormBuilder` и `FormGroup` с валидаторами и типами.
+- Явный lifecycle (`ngOnDestroy`) для отписки от потоков (например, в `ProfileFilters`).
+### Переиспользуемые UI компоненты
+- `Layout` с общим каркасом приложения и `Sidebar`.
+- `ProfileCard`, `SubscriberCard`, `ProfileHeader`, `SvgIcon`, drag‑n‑drop директивы, пайп `ImgUrlPipe` для формирования URL картинок.
+- Компоненты ленты постов (`PostFeed`, `Post`, `PostInput`).
+## Архитектура проекта
+### Pages (страницы)
+- `login-page`: авторизация, вход в систему, работа с `Auth` и `Router`.
+- `profile-page`: отображение профиля, загрузка своих и чужих аккаунтов, работа с параметрами маршрута (`ActivatedRoute` + `switchMap`).
+- `settings-page`: редактирование профиля и аватара, реактивные формы, интеграция с `ProfileService`.
+- `search-page`: список найденных профилей + блок фильтров (`ProfileFilters`).
+Каждая страница — standalone-компонент со своим шаблоном и SCSS.
+### Common UI компоненты
+- `layout`: основной каркас приложения, подключает `Sidebar` и `RouterOutlet`.
+- `sidebar`: меню навигации, аватар и базовая информация о пользователе, блок «подписчики».
+- `profile-card`, `subscriber-card`: карточки для списка профилей/подписчиков.
+- `profile-header`: верхняя часть профиля (имя, ник, описание, стек и т.д.).
+- `svg-icon`: единый компонент-обёртка для SVG-иконок.
+### Сервисы
+- **`ProfileService`**:
+  - Все операции с профилями: текущий пользователь, чужие аккаунты, подписчики, поиск, редактирование, загрузка аватара.
+  - Использует signals для хранения текущего пользователя и отфильтрованных профилей.
+  - Инкапсулирует базовый URL API и детали HTTP-запросов.
+- **`Auth`**:
+  - Авторизация, обновление токена, logout.
+  - Работа с cookie через `ngx-cookie-service`.
+  - Методы: `login`, `refreshAuthToken`, `logout`, `saveTokens`.
+### Слой работы с API
+- `HttpClient` используется напрямую в сервисах `Auth` и `ProfileService`.
+- Базовый URL API вынесен в сервисы: `https://icherniakov.ru/yt-course` и `/auth`.
+- Для некоторых методов используется `FormData` (загрузка аватара, авторизация).
+### Interceptors
+- **`authTokenInterceptor`** (functional interceptor):
+  - Добавляет заголовок `Authorization: Bearer <token>` ко всем запросам.
+  - При ответе `403` автоматически пытается обновить токен через `Auth.refreshAuthToken`.
+  - Использует `BehaviorSubject` для координации конкурентных запросов, чтобы все «дождались» обновления токена и не дублировали запросы.
+  - При неуспешном refresh вызывает `logout`, чистит cookie и редиректит на `/login`.
+### Маршрутизация и Guards
+- **`app.routes.ts`**:
+  - Базовый layout: `''` → `Layout` с дочерними роутами.
+  - `profile/:id`, `settings`, `search` — приватные маршруты под `Layout`.
+  - `login` — публичный маршрут.
+- **`canActivateAuth` guard**:
+  - Проверяет авторизацию перед доступом к приватным маршрутам.
+  - Использует состояние из `Auth` и при необходимости направляет пользователя на логин.
+### Потоки данных и RxJS
+- Взаимодействие с профилями и маршрутами построено через `Observable` и `signals`.
+- **`ProfilePage`**:
+  - `profile$` вычисляется как реакция на `route.params` через `switchMap`.
+  - Разделяет логику «мой профиль» (`/me`) и «чужой профиль» (`/:id`).
+- **`ProfileFilters`**:
+  - Реактивное слежение за формой поиска.
+  - `startWith`, `debounceTime`, `switchMap` — для минимизации количества HTTP-запросов и плавной UX.
+## Backend API
+Приложение работает поверх REST API, для которого доступна Swagger-документация:
+`https://icherniakov.ru/yt-course/docs#/account/get_subscribers_account_subscribers__get`
+Frontend обращается к этому API через `HttpClient` и сервисы:
+- **Базовый URL**: `https://icherniakov.ru/yt-course`.
+- **Авторизация**:
+  - `POST /auth/token` — логин (возвращает `access_token` и `refresh_token`).
+  - `POST /auth/refresh` — обновление `access_token` по `refresh_token`.
+- **Аккаунты и профили**:
+  - `GET /account/me` — текущий профиль пользователя.
+  - `PATCH /account/me` — обновление своих данных.
+  - `POST /account/upload_image` — загрузка аватара.
+  - `GET /account/{id}` — получение профиля по `id`.
+  - `GET /account/accounts` — поиск/фильтр аккаунтов (используется на странице поиска).
+  - `GET /account/subscribers/` — список подписчиков (в сайдбаре и профиле).
+Все запросы к защищённым endpoint’ам проходят через `authTokenInterceptor`, который автоматически подставляет `Bearer`-токен и управляет refresh-логикой.
+## Дизайн
+UI реализован на основе макета в Figma:
+`https://www.figma.com/design/oGHQigWHYDVfYA7GPRi9q1/%F0%9F%92%ABTIK-TALK?node-id=30-6072&t=flDim8arSTvEPc4e-0`
+Основные моменты:
+- Используется SCSS для модульных стилей компонентов и глобальных токенов (отступы, шрифты).
+- Вёрстка адаптирована под layout с боковой навигацией, карточками профилей и современной типографикой.
+- Компоненты (`Sidebar`, `ProfileCard`, `ProfileHeader` и др.) спроектированы как переиспользуемые блоки, повторяющие структуру макета.
+## Регистрация пользователей
+Регистрация новых пользователей происходит не через frontend, а через Telegram-бота:
+`https://t.me/icherniakov_info_bot`
+Пользователь должен:
+1. Перейти в Telegram-бота.
+2. Зарегистрироваться / авторизоваться там.
+3. После этого он получает доступ к backend API и может использовать веб-приложение (логин через форму в `LoginPage`).
+Таким образом, этот frontend предполагает уже существующую учётную запись в системе.
+## Запуск проекта
 ```bash
-ng serve
-```
+# установка зависимостей
+npm install
+# запуск dev-сервера Angular
+npm start
+# или напрямую через Angular CLI
+# npx ng serve
+По умолчанию dev-сервер стартует на http://localhost:4200/.
 
-Once the server is running, open your browser and navigate to `http://localhost:4200/`. The application will automatically reload whenever you modify any of the source files.
-
-## Code scaffolding
-
-Angular CLI includes powerful code scaffolding tools. To generate a new component, run:
-
-```bash
-ng generate component component-name
-```
-
-For a complete list of available schematics (such as `components`, `directives`, or `pipes`), run:
-
-```bash
-ng generate --help
-```
-
-## Building
-
-To build the project run:
-
-```bash
-ng build
-```
-
-This will compile your project and store the build artifacts in the `dist/` directory. By default, the production build optimizes your application for performance and speed.
-
-## Running unit tests
-
-To execute unit tests with the [Vitest](https://vitest.dev/) test runner, use the following command:
-
-```bash
-ng test
-```
-
-## Running end-to-end tests
-
-For end-to-end (e2e) testing, run:
-
-```bash
-ng e2e
-```
-
-Angular CLI does not come with an end-to-end testing framework by default. You can choose one that suits your needs.
-
-## Additional Resources
-
-For more information on using the Angular CLI, including detailed command references, visit the [Angular CLI Overview and Command Reference](https://angular.dev/tools/cli) page.
+Технологический стек ориентирован на актуальный Angular 21, поэтому рекомендуется использовать современную версию Node.js (например, Node 20+).
